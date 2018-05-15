@@ -44,7 +44,7 @@ namespace Application.Tests.Managers
                 ManagerId = reportTo
             }));
         }
-        
+
         [Fact]
         public void ShouldNotBeManagerOfItself()
         {
