@@ -1,3 +1,11 @@
+# EF Core unit testing
+
+This repository is a fork from Jason Taylor's Northwind and modified for demonstrating EF Core unit testing for user group presentations.
+
+You can find the original blog post regarding this topic on my blog.
+https://jkdev.me/ef-core-unit-tests/
+
+Original Readme:
 # NorthwindTraders
 
 Northwind Traders is a sample application built using ASP.NET Core and Entity Framework Core.
