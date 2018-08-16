@@ -6,64 +6,70 @@ using Xunit;
 
 namespace Application.Tests.Managers
 {
-    public class ChangeEmployeeReportToCommandTest
-        : TestBase
+    public class ChangeEmployeeReportToCommandTest : TestBase
     {
         [Fact]
         public void ShouldMoveEmployeeUnderManager()
         {
-            // Prepare
-            var context = InitAndGetDbContext();
-            var command = new ChangeEmployeeReportToCommand(context);
-
-            // Execute
-            int reportTo = 2;
-            command.Execute(new EmployeeUnderManagerModel
+            using (var context = InitAndGetDbContext())
             {
-                EmployeeId = 1,
-                ManagerId = reportTo
-            });
+                // Prepare
+                var command = new ChangeEmployeeReportToCommand(context);
 
-            // Asses
-            Assert.Single(context.Employees
-                .Where(e => e.EmployeeId == 1 && e.ReportsTo == reportTo));
+                // Execute
+                int reportTo = 2;
+                command.Execute(new EmployeeUnderManagerModel
+                {
+                    EmployeeId = 1,
+                    ManagerId = reportTo
+                });
+
+                // Asses
+                Assert.Single(context.Employees
+                    .Where(e => e.EmployeeId == 1 && e.ReportsTo == reportTo));
+            }
         }
 
         [Fact]
         public void ShouldFailForNonExistingManager()
         {
-            // Prepare
-            var context = InitAndGetDbContext();
-            var command = new ChangeEmployeeReportToCommand(context);
-
-            // Execute and asses
-            int reportTo = 3;
-            Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
+            using (var context = InitAndGetDbContext())
             {
-                EmployeeId = 1,
-                ManagerId = reportTo
-            }));
+                // Prepare
+                var command = new ChangeEmployeeReportToCommand(context);
+
+                // Execute and asses
+                int reportTo = 3;
+                Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
+                {
+                    EmployeeId = 1,
+                    ManagerId = reportTo
+                }));
+            }
         }
         
         [Fact]
         public void ShouldNotBeManagerOfItself()
         {
-            // Prepare
-            var context = InitAndGetDbContext();
-            var command = new ChangeEmployeeReportToCommand(context);
-
-            // Execute and asses
-            int reportTo = 1;
-            Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
+            using (var context = InitAndGetDbContext())
             {
-                EmployeeId = 1,
-                ManagerId = reportTo
-            }));
+                // Prepare
+                var command = new ChangeEmployeeReportToCommand(context);
+
+                // Execute and asses
+                int reportTo = 1;
+                Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
+                {
+                    EmployeeId = 1,
+                    ManagerId = reportTo
+                }));
+            }
         }
 
         private NorthwindTraders.Persistance.NorthwindContext InitAndGetDbContext()
         {
             //UseSqlite();
+
             var context = GetDbContext();
 
             context.Employees.Add(new Employee
@@ -78,6 +84,7 @@ namespace Application.Tests.Managers
                 FirstName = "",
                 LastName = ""
             });
+
             context.SaveChanges();
             return context;
         }

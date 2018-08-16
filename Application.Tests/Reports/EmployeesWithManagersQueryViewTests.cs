@@ -10,15 +10,7 @@ namespace Application.Tests.Reports
 {
     public class EmployeesWithManagersQueryViewTests : TestBase
     {
-        [Fact]
-        public async Task ShouldReturnReport()
-        {
-            UseSqlite();
-
-            var context = GetDbContext();
-            NorthwindInitializer.Initialize(context);
-
-            context.Database.GetDbConnection().Execute(@"
+        private const string EmployeesWithManagersViewSql = @"
 CREATE VIEW viewEmployeesWithManagers(
         EmployeeFirstName, EmployeeLastName, EmployeeTitle,
         ManagerFirstName, ManagetLastName, ManagerTitle)
@@ -27,15 +19,31 @@ SELECT e.FirstName as EmployeeFirstName, e.LastName as EmployeeLastName, e.Title
         m.FirstName as ManagerFirstName, m.LastName as ManagetLastName, m.Title as ManagerTitle
 FROM employees AS e
 JOIN employees AS m ON e.ReportsTo = m.EmployeeID
-WHERE e.ReportsTo is not null");
+WHERE e.ReportsTo is not null";
 
-            var query = new EmployeesWithManagersViewQuery(context);
-            var result = await query.Execute();
+        [Fact]
+        public async Task ShouldReturnReport()
+        {
+            UseSqlite();
 
-            Assert.NotEmpty(result);
-            Assert.Equal(8, result.Count());
-            Assert.Contains(result, r => r.ManagerTitle == "Vice President, Sales");
-            Assert.DoesNotContain(result, r => r.EmployeeTitle == "Vice President, Sales");
+            using (var context = GetDbContext())
+            {
+                // Arrange
+                // This view only exists on DB, so we need to create it before querying.
+                context.Database.GetDbConnection().Execute(EmployeesWithManagersViewSql);
+
+                NorthwindInitializer.Initialize(context);
+                var query = new EmployeesWithManagersViewQuery(context);
+
+                // Act
+                var result = await query.Execute();
+
+                // Assert
+                Assert.NotEmpty(result);
+                Assert.Equal(8, result.Count());
+                Assert.Contains(result, r => r.ManagerTitle == "Vice President, Sales");
+                Assert.DoesNotContain(result, r => r.EmployeeTitle == "Vice President, Sales");
+            }
         }
     }
 }

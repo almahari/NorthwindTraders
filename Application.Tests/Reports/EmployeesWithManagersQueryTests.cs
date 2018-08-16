@@ -13,16 +13,23 @@ namespace Application.Tests.Reports
         {
             UseSqlite();
 
-            var context = GetDbContext();
-            NorthwindInitializer.Initialize(context);
+            using (var context = GetDbContext())
+            {
+                // Arrange
+                // Use same seed data as production.
+                NorthwindInitializer.Initialize(context);
 
-            var query = new EmployeesWithManagersQuery(context);
-            var result = await query.Execute();
+                var query = new EmployeesWithManagersQuery(context);
 
-            Assert.NotEmpty(result);
-            Assert.Equal(8, result.Count());
-            Assert.Contains(result, r => r.ManagerTitle == "Vice President, Sales");
-            Assert.DoesNotContain(result, r => r.EmployeeTitle == "Vice President, Sales");
+                // Act
+                var result = await query.Execute();
+
+                // Assert
+                Assert.NotEmpty(result);
+                Assert.Equal(8, result.Count());
+                Assert.Contains(result, r => r.ManagerTitle == "Vice President, Sales");
+                Assert.DoesNotContain(result, r => r.EmployeeTitle == "Vice President, Sales");
+            }
         }
     }
 }
