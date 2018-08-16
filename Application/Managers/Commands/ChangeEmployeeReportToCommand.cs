@@ -15,16 +15,7 @@ namespace NorthwindTraders.Application.Managers.Commands
 
         public void Execute(EmployeeUnderManagerModel model)
         {
-            // TODO: #2
-
-            var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId);
-
             // TODO: #1
-
-            // Set manager for the employee.
-            employee.ReportsTo = model.ManagerId;
-
-            _context.SaveChanges();
         }
     }
 }
@@ -32,6 +23,19 @@ namespace NorthwindTraders.Application.Managers.Commands
 
 
 
+
+
+
+//// TODO: #3
+
+//var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId);
+
+//// TODO: #2
+
+//// Set manager for the employee.
+//employee.ReportsTo = model.ManagerId;
+
+//            _context.SaveChanges();
 
 
 
