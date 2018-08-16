@@ -13,10 +13,10 @@ namespace Application.Tests.Managers
         {
             using (var context = InitAndGetDbContext())
             {
-                // Prepare
+                // Arrange
                 var command = new ChangeEmployeeReportToCommand(context);
 
-                // Execute
+                // Act
                 int reportTo = 2;
                 command.Execute(new EmployeeUnderManagerModel
                 {
@@ -24,7 +24,7 @@ namespace Application.Tests.Managers
                     ManagerId = reportTo
                 });
 
-                // Asses
+                // Assert
                 Assert.Single(context.Employees
                     .Where(e => e.EmployeeId == 1 && e.ReportsTo == reportTo));
             }
@@ -35,10 +35,10 @@ namespace Application.Tests.Managers
         {
             using (var context = InitAndGetDbContext())
             {
-                // Prepare
+                // Arrange
                 var command = new ChangeEmployeeReportToCommand(context);
 
-                // Execute and asses
+                // Act and assert
                 int reportTo = 3;
                 Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
                 {
@@ -53,10 +53,10 @@ namespace Application.Tests.Managers
         {
             using (var context = InitAndGetDbContext())
             {
-                // Prepare
+                // Arrange
                 var command = new ChangeEmployeeReportToCommand(context);
 
-                // Execute and asses
+                // Act and assert
                 int reportTo = 1;
                 Assert.Throws<ArgumentException>(() => command.Execute(new EmployeeUnderManagerModel
                 {
@@ -68,8 +68,6 @@ namespace Application.Tests.Managers
 
         private NorthwindTraders.Persistance.NorthwindContext InitAndGetDbContext()
         {
-            //UseSqlite();
-
             var context = GetDbContext();
 
             context.Employees.Add(new Employee
